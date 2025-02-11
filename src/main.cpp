@@ -16,7 +16,6 @@ int main(int argc, char** argv) {
     GeneralConfig config = ArgumentParser::parseArgs(argc, argv);
     std::unique_ptr<GeneratorBase> gen;
 
-
     switch (config.type) {
         case SoundTypes::BROWN_NOISE: {
             gen = std::make_unique<BrownNoiseGenerator>();
