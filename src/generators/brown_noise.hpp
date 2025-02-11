@@ -9,6 +9,7 @@ class BrownNoiseGenerator: public GeneratorBase {
 private:
     SoundConfig m_config{};
     static inline float smoothingFactor = 0.9f;
+    static inline float leakyIntegratorCoefficient = 0.995f;
 public:
     int generateSamples(void *outputBuf, unsigned long frameCount, void* userData) override
     {
@@ -16,13 +17,13 @@ public:
 
         std::random_device device;
         std::normal_distribution<> dist(0.0f, 0.020f); // Reduced standard deviation
-        std::mt19937 engine(device());
+        std::mt19937_64 engine(device());
 
         float brownNoise = 0.0f;
         for (auto i = 0; i < frameCount; ++i) {
             auto whiteNoise = dist(engine);
-            brownNoise = (brownNoise + whiteNoise) * 0.995f;
-            *out++ = std::clamp(brownNoise, -1.0f, 1.0f) * m_config.volume;
+            brownNoise = (brownNoise + whiteNoise) * leakyIntegratorCoefficient;
+            *out++ = brownNoise * m_config.volume;
         }
         return 0;
     }
