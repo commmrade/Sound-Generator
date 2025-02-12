@@ -18,7 +18,7 @@ void SoundPlayer::init() {
         throw std::runtime_error("PA could not be initialized");
     }
 
-    err = Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, config.sampleRate, paFramesPerBufferUnspecified, &SoundPlayer::soundCallback, this);
+    err = Pa_OpenDefaultStream(&stream, 0, 2, paFloat32, config.sampleRate, paFramesPerBufferUnspecified, &SoundPlayer::soundCallback, this);
     if (err != paNoError) {
         throw std::runtime_error("Could not open default stream");
     }
@@ -49,10 +49,5 @@ void SoundPlayer::stop() {
 int SoundPlayer::soundCallback(const void *inputBuf, void* outputBuf, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
     auto* soundPlayer =  static_cast<SoundPlayer*>(userData);
     float* out = static_cast<float*>(outputBuf);
-
-    for (auto i = 0; i < frameCount; ++i) {
-        float sample = soundPlayer->generator->generateSamples();
-        *out++ = sample;
-    }
-    return 0;
+    return soundPlayer->generator->sampleCallback(outputBuf, frameCount);
 }

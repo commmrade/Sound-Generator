@@ -1,5 +1,7 @@
+#pragma once
 #include "generator_base.hpp"
 #include <cstdlib>
+#include <portaudio.h>
 #include <random>
 
 class BrownNoiseGenerator: public GeneratorBase {
@@ -17,13 +19,16 @@ public:
     BrownNoiseGenerator() = default;
     ~BrownNoiseGenerator() = default;
 
-    float generateSamples() override
+    int sampleCallback(void* outputBuf, unsigned long frameCount) override
     {
-        float randomSample = dist(engine);
-        brownNoise += randomSample * GAIN;
-        brownNoise = brownNoise * LOW_PASS;
-
-        return brownNoise * m_config.volume;
+        float* out = (float*)outputBuf;
+        for (auto i = 0; i < frameCount; ++i) {
+            float randomSample = dist(engine);
+            brownNoise += randomSample * GAIN;
+            brownNoise = brownNoise * LOW_PASS;
+            *out++ = brownNoise * m_config.volume;
+        }
+        return paContinue;
     }
 
 

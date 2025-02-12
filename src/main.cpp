@@ -7,6 +7,7 @@
 #include <cmath>
 #include "config/types.hpp"
 #include "core/soundplayer.hpp"
+#include "generators/binaural_beats.hpp"
 #include "generators/generator_base.hpp"
 #include "generators/white_noise.hpp"
 #include "generators/brown_noise.hpp"
@@ -24,6 +25,11 @@ int main(int argc, char** argv) {
     switch (config.type) {
         case SoundTypes::BROWN_NOISE: {
             gen = std::make_unique<BrownNoiseGenerator>();
+            break;
+        }
+        case SoundTypes::BINAURAL: {
+            gen = std::make_unique<BinauralBeatsGenerator>();
+            // config.channels = 2;
             break;
         }
         case SoundTypes::WHITE_NOISE: {

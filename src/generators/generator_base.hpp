@@ -6,7 +6,7 @@
 
 class GeneratorBase {
 public:
-    virtual float generateSamples() = 0;
+    virtual int sampleCallback(void* outputBuf, unsigned long frameCount) = 0;
     virtual void setConfig(const SoundConfig &cfg) = 0;
 
     virtual ~GeneratorBase() = default;

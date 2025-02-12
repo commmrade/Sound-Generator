@@ -1,5 +1,7 @@
+#pragma once
 #include "generator_base.hpp"
 #include <cstdlib>
+#include <portaudio.h>
 #include <random>
 
 
@@ -14,10 +16,14 @@ public:
     WhiteNoiseGenerator() = default;
     ~WhiteNoiseGenerator() = default;
 
-    float generateSamples() override
+    int sampleCallback(void* outputBuf, unsigned long frameCount)
     {
-        auto val = dist(device);
-        return val * m_config.volume;
+        float* out = (float*)outputBuf;
+        for (auto i = 0; i < frameCount; ++i) {
+            auto val = dist(device);
+            *out++ = val * m_config.volume;
+        }
+        return paContinue;
     }
     void setConfig(const SoundConfig &cfg) override {
         m_config = cfg;
