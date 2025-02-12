@@ -29,10 +29,10 @@ public:
         std::string value = args::get(type);
         SoundTypes typeS = toSoundType(value);
         configGeneral.type = typeS;
-
         configGeneral.playTime = args::get(playTime);
 
         configGeneral.sampleRate = args::get(sampleRate);
+
 
         return configGeneral;
     }

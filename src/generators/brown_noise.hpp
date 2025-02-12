@@ -16,17 +16,21 @@ public:
         float* out = (float*)outputBuf;
 
         std::random_device device;
-        std::normal_distribution<> dist(0.0f, 0.020f); // Reduced standard deviation
+        std::normal_distribution<> dist(0.0f, 1.0f); // Standard deviation for normal distribution
         std::mt19937_64 engine(device());
 
         float brownNoise = 0.0f;
         for (auto i = 0; i < frameCount; ++i) {
-            auto whiteNoise = dist(engine);
-            brownNoise = (brownNoise + whiteNoise) * leakyIntegratorCoefficient;
+            float randomSample = dist(engine);
+
+            brownNoise += randomSample * 0.02f;  // Adjust gain for smoother transitions
+            brownNoise = brownNoise * 0.98f;
+
             *out++ = brownNoise * m_config.volume;
         }
         return 0;
     }
+
     void setConfig(SoundConfig &cfg) override {
         m_config = cfg;
     }
