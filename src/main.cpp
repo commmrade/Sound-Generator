@@ -13,9 +13,14 @@
 #include "portaudio.h"
 
 int main(int argc, char** argv) {
-    GeneralConfig config = ArgumentParser::parseArgs(argc, argv);
-    std::unique_ptr<GeneratorBase> gen;
+    GeneralConfig config;
+    try {
+        config = ArgumentParser::parseArgs(argc, argv);
+    } catch (...) {
+        return 1;
+    }
 
+    std::unique_ptr<GeneratorBase> gen;
     switch (config.type) {
         case SoundTypes::BROWN_NOISE: {
             gen = std::make_unique<BrownNoiseGenerator>();
@@ -36,8 +41,9 @@ int main(int argc, char** argv) {
 
     PlayerConfig playerCfg;
     playerCfg.sampleRate = config.sampleRate;
-    SoundPlayer player(std::move(gen), playerCfg);
 
+
+    SoundPlayer player(std::move(gen), playerCfg);
     player.start();
     Pa_Sleep(1000 * config.playTime);
     player.stop();

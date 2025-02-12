@@ -1,38 +1,33 @@
 #include "generator_base.hpp"
-#include <algorithm>
 #include <cstdlib>
 #include <random>
-#include "../config/consts.hpp"
-#include <iostream>
 
 class BrownNoiseGenerator: public GeneratorBase {
 private:
     SoundConfig m_config{};
     inline static float GAIN = 0.015f;
-    inline static float LOW_PASS = 0.985f;
+    inline static float LOW_PASS = 0.992f;
 
     std::random_device device;
     std::normal_distribution<> dist{0.0f, 1.0f}; // Standard deviation for normal distribution
     std::mt19937_64 engine{device()};
+
+    float brownNoise{0.0f};
 public:
+    BrownNoiseGenerator() = default;
+    ~BrownNoiseGenerator() = default;
 
-
-    int generateSamples(void *outputBuf, unsigned long frameCount, void* userData) override
+    float generateSamples() override
     {
-        float* out = (float*)outputBuf;
-        float brownNoise = 0.0f;
-        for (auto i = 0; i < frameCount; ++i) {
-            float randomSample = dist(engine);
+        float randomSample = dist(engine);
+        brownNoise += randomSample * GAIN;
+        brownNoise = brownNoise * LOW_PASS;
 
-            brownNoise += randomSample * GAIN;  // Adjust gain for smoother transitions
-            brownNoise = brownNoise * LOW_PASS;
-
-            *out++ = brownNoise * m_config.volume;
-        }
-        return 0;
+        return brownNoise * m_config.volume;
     }
 
-    void setConfig(SoundConfig &cfg) override {
+
+    void setConfig(const SoundConfig &cfg) override {
         m_config = cfg;
     }
 };

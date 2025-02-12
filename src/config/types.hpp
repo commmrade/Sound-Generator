@@ -7,8 +7,7 @@ enum class SoundTypes {
     BROWN_NOISE,
     WAVES,
 };
-
-SoundTypes toSoundType(const std::string_view typeStr) {
+inline SoundTypes toSoundType(const std::string_view typeStr) {
     if (typeStr == "pink_noise") {
         return SoundTypes::PINK_NOISE;
     } else if (typeStr == "white_noise") {
@@ -20,14 +19,12 @@ SoundTypes toSoundType(const std::string_view typeStr) {
     }
 }
 
-
 struct GeneralConfig {
     float volume;
     int playTime;
     SoundTypes type;
     int sampleRate;
 };
-
 struct SoundConfig {
     float volume{0.1};
 };

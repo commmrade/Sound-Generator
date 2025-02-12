@@ -1,28 +1,25 @@
 #include "generator_base.hpp"
 #include <cstdlib>
 #include <random>
-#include "../config/consts.hpp"
+
 
 
 class WhiteNoiseGenerator: public GeneratorBase {
 private:
     SoundConfig m_config{};
+
+    std::random_device device;
+    std::normal_distribution<> dist{-.2f, 0.4f};
 public:
-    int generateSamples(void *outputBuf, unsigned long frameCount, void* userData) override
+    WhiteNoiseGenerator() = default;
+    ~WhiteNoiseGenerator() = default;
+
+    float generateSamples() override
     {
-        float* out = (float*)outputBuf;
-
-        std::random_device device;
-        std::normal_distribution<> dist(-.2f, 0.4f);
-
-        for (auto i = 0; i < frameCount; ++i) {
-            auto val = dist(device);
-            *out++ = val * m_config.volume;
-        }
-
-        return 0;
+        auto val = dist(device);
+        return val * m_config.volume;
     }
-    void setConfig(SoundConfig &cfg) override {
+    void setConfig(const SoundConfig &cfg) override {
         m_config = cfg;
     }
 };

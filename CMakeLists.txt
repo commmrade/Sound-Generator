@@ -12,7 +12,7 @@ find_library(PORTAUDIO_LIBRARY NAMES portaudio)
 include_directories(/usr/local/include)
 
 # Add executable
-add_executable(proj src/main.cpp)
+add_executable(proj src/main.cpp src/core/soundplayer.cpp src/config/arguments.cpp)
 
 # Link PortAudio library to the project
 target_link_libraries(proj /usr/local/lib/libportaudio.so)
